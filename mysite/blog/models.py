@@ -6,8 +6,15 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
-# create a model called post
 
+
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super(PublishedManager,
+                     self).get_queryset()\
+                          .filter(status='published')
+
+#Post class
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
@@ -27,7 +34,12 @@ class Post(models.Model):
                               choices=STATUS_CHOICES,
                               default='draft')
 
-# meta stands for meta data, we are asking djang to display content by date plubished.
+    objects = models.Manager()  # The default manager.
+    published = PublishedManager()  # Our custom manager.
+
+
+
+# meta stands for meta data, we are asking django to display content by date plubished.
     class Meta:
         ordering = ('-publish',)
 
